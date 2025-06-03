@@ -4,11 +4,12 @@ import Link from 'next/link';
 import fs from 'fs';
 import path from 'path';
 
-interface Props {
+type Props = {
   params: {
     slug: string;
   };
-}
+  searchParams: { [key: string]: string | string[] | undefined };
+};
 
 export async function generateStaticParams() {
   const imagesDirectory = path.join(process.cwd(), 'public/images');
@@ -19,7 +20,7 @@ export async function generateStaticParams() {
   }));
 }
 
-export default function PoemPage({ params }: Props) {
+export default async function PoemPage({ params }: Props) {
   const { slug } = params;
   const decodedSlug = decodeURIComponent(slug);
   const imagePath = `/images/${decodedSlug}.png`;

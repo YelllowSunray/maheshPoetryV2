@@ -5,26 +5,34 @@ import fs from 'fs';
 import path from 'path';
 
 export async function generateStaticParams() {
-  const imagesDirectory = path.join(process.cwd(), 'public/images');
-  const files = fs.readdirSync(imagesDirectory);
-  
-  return files.map((filename) => ({
-    slug: encodeURIComponent(filename.replace('.png', '')),
-  }));
+  try {
+    const imagesDirectory = path.join(process.cwd(), 'public/images');
+    const files = fs.readdirSync(imagesDirectory);
+    
+    return files
+      .filter(filename => filename.endsWith('.png'))
+      .map((filename) => ({
+        slug: filename.replace('.png', ''),
+      }));
+  } catch (error) {
+    console.error('Error generating static params:', error);
+    return [];
+  }
 }
 
-type PageProps = {
-  params: Promise<{ slug: string }>;
-};
-
-export default async function PoemPage(props: PageProps) {
-  const { slug } = await props.params;
-  const decodedSlug = decodeURIComponent(slug);
-  const imagePath = `/images/${decodedSlug}.png`;
+export default function PoemPage({
+  params,
+}: {
+  params: { slug: string };
+}) {
+  const { slug } = params;
+  // Don't decode the slug as it might contain special characters
+  const imagePath = `/images/${slug}.png`;
 
   // Check if the file exists
   const fullPath = path.join(process.cwd(), 'public', imagePath);
   if (!fs.existsSync(fullPath)) {
+    console.error(`File not found: ${fullPath}`);
     notFound();
   }
 
@@ -40,10 +48,11 @@ export default async function PoemPage(props: PageProps) {
         <div className="relative w-full aspect-[3/4]">
           <Image
             src={imagePath}
-            alt={decodedSlug}
+            alt={slug}
             fill
             className="object-contain"
             priority
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
         </div>
       </div>

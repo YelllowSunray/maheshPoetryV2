@@ -4,7 +4,8 @@ import path from 'path';
 
 export default function Home() {
   const imagesDirectory = path.join(process.cwd(), 'public/images');
-  const files = fs.readdirSync(imagesDirectory);
+  const files = fs.readdirSync(imagesDirectory)
+    .filter(filename => filename.endsWith('.png'));
 
   return (
     <div className="min-h-screen bg-white p-8">
@@ -13,12 +14,11 @@ export default function Home() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {files.map((filename) => {
             const poemName = filename.replace('.png', '');
-            const slug = encodeURIComponent(poemName);
             
             return (
               <Link
                 key={filename}
-                href={`/poem/${slug}`}
+                href={`/poem/${poemName}`}
                 className="block p-6 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
               >
                 <h2 className="text-xl font-semibold text-gray-800">

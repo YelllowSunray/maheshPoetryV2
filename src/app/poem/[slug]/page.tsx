@@ -11,9 +11,12 @@ export async function generateStaticParams() {
     
     return files
       .filter(filename => filename.endsWith('.png'))
-      .map((filename) => ({
-        slug: filename.replace('.png', ''),
-      }));
+      .map((filename) => {
+        const poemName = filename.replace('.png', '');
+        // URL encode each part of the name separately
+        const encodedName = poemName.split(' ').map(part => encodeURIComponent(part)).join(' ');
+        return { slug: encodedName };
+      });
   } catch (error) {
     console.error('Error generating static params:', error);
     return [];
@@ -26,7 +29,9 @@ export default async function Page({
   params: { slug: string };
 }) {
   const { slug } = params;
-  const imagePath = `/images/${slug}.png`;
+  // Decode the URL parts separately to handle spaces correctly
+  const decodedSlug = slug.split(' ').map(part => decodeURIComponent(part)).join(' ');
+  const imagePath = `/images/${decodedSlug}.png`;
 
   // Check if the file exists
   const fullPath = path.join(process.cwd(), 'public', imagePath);
@@ -47,7 +52,7 @@ export default async function Page({
         <div className="relative w-full aspect-[3/4]">
           <Image
             src={imagePath}
-            alt={slug}
+            alt={decodedSlug}
             fill
             className="object-contain"
             priority

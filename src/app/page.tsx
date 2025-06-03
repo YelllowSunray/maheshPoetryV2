@@ -14,11 +14,12 @@ export default function Home() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {files.map((filename) => {
             const poemName = filename.replace('.png', '');
+            const encodedName = poemName.split(' ').map(part => encodeURIComponent(part)).join(' ');
             
             return (
               <Link
                 key={filename}
-                href={`/poem/${poemName}`}
+                href={`/poem/${encodedName}`}
                 className="block p-6 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
               >
                 <h2 className="text-xl font-semibold text-gray-800">

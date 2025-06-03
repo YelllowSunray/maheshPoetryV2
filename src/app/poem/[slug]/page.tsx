@@ -20,11 +20,12 @@ export async function generateStaticParams() {
   }
 }
 
-export default function PoemPage({
-  params,
-}: {
+type Props = {
   params: { slug: string };
-}) {
+  searchParams: Record<string, string | string[] | undefined>;
+};
+
+export default async function PoemPage({ params }: Props) {
   const { slug } = params;
   // Don't decode the slug as it might contain special characters
   const imagePath = `/images/${slug}.png`;

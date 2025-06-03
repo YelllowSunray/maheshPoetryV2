@@ -23,12 +23,13 @@ export async function generateStaticParams() {
   }
 }
 
-export default async function Page({
-  params,
-}: {
-  params: { slug: string };
-}) {
-  const { slug } = params;
+interface PageProps {
+  params: Promise<{ slug: string }>;
+  searchParams: { [key: string]: string | string[] | undefined };
+}
+
+export default async function Page(props: PageProps) {
+  const { slug } = await props.params;
   // Decode the URL parts separately to handle spaces correctly
   const decodedSlug = slug.split(' ').map(part => decodeURIComponent(part)).join(' ');
   const imagePath = `/images/${decodedSlug}.png`;

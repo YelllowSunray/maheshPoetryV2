@@ -13,12 +13,12 @@ export async function generateStaticParams() {
   }));
 }
 
-export default async function PoemPage({
-  params,
-}: {
-  params: { slug: string };
-}) {
-  const { slug } = params;
+type PageProps = {
+  params: Promise<{ slug: string }>;
+};
+
+export default async function PoemPage(props: PageProps) {
+  const { slug } = await props.params;
   const decodedSlug = decodeURIComponent(slug);
   const imagePath = `/images/${decodedSlug}.png`;
 

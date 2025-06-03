@@ -25,11 +25,11 @@ export async function generateStaticParams() {
 
 interface PageProps {
   params: Promise<{ slug: string }>;
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
 export default async function Page(props: PageProps) {
-  const { slug } = await props.params;
+  const [{ slug }, searchParams] = await Promise.all([props.params, props.searchParams]);
   // Decode the URL parts separately to handle spaces correctly
   const decodedSlug = slug.split(' ').map(part => decodeURIComponent(part)).join(' ');
   const imagePath = `/images/${decodedSlug}.png`;
